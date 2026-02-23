@@ -127,11 +127,28 @@ def create_argo_collection(
 
 @prefect.flow
 def main():
+    
+    # Get the catalog
     catalog = get_catalog()
-    collection = create_argo_collection()
-    catalog.add_child(collection)
-    catalog.normalize_hrefs("./catalog")
-    catalog.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
+
+    # Add the collection if it has not been added
+    if catalog.get_child("argo-csiro") is None:
+        collection = create_argo_collection()
+        catalog.add_child(collection)
+        catalog.normalize_hrefs("./catalog")
+        catalog.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
+
+    # Get the collection
+    collection = catalog.get_child("argo-csiro")
+
+    start_date = datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc)
+    recent_items = [
+        item for item in collection.get_items() 
+        if item.datetime >= start_date
+    ]
+
+    rich.print(recent_items)
+
 
 
 if __name__ == "__main__":
