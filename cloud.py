@@ -1,25 +1,46 @@
-import pyarrow
-import pyarrow.dataset
-import pyarrow.fs
 import polars
+import timer
 
-FILE_SYSTEM = pyarrow.fs.S3FileSystem(
-    region="ap-southeast-2", 
-    anonymous=True,
+hive_partitioned_lf = polars.scan_parquet(
+    source="s3://data-uplift-public/capstone/parquet_partitioned/",
+    storage_options={"skip_signature": "true"},
+    hive_partitioning=True,
 )
 
-ds = pyarrow.dataset.dataset(
-    source="data-uplift-public/capstone/parquet_partitioned/",
-    filesystem=FILE_SYSTEM,
+year_partitioned_lf = polars.scan_parquet(
+    source="s3://data-uplift-public/capstone/parquet_partitioned/",
+    storage_options={"skip_signature": "true"},
 )
 
-print(ds.to_table())
+file_partitioned_lf = polars.scan_parquet(
+    source="s3://data-uplift-public/capstone/parquet/",
+    storage_options={"skip_signature": "true"},
+)
 
-# print(list(ds.get_fragments()))
+with timer.timeit("hive_partitioned_lf"):
+    df = (
+        hive_partitioned_lf
+        .filter(
+            polars.col("year").eq(2020)
+        )
+    ).collect()
+    print(df)
 
-# lf = polars.scan_pyarrow_dataset(ds)
-# lf.filter(
-#     polars.col("year").eq(2020)
-# )
+with timer.timeit("year_partitioned_lf"):
+    df = (
+        year_partitioned_lf
+        .filter(
+            polars.col("JULD").dt.year().eq(2020)
+        )
+    ).collect()
+    print(df)
 
-# df = lf.collect()
+with timer.timeit("file_partitioned_lf"):
+    df = (
+        file_partitioned_lf
+        .filter(
+            polars.col("JULD").dt.year().eq(2020)
+        )
+    ).collect()
+    print(df)
+
