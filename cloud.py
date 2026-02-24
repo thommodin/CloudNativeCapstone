@@ -18,29 +18,13 @@ file_partitioned_lf = polars.scan_parquet(
 )
 
 with timer.timeit("hive_partitioned_lf"):
-    df = (
-        hive_partitioned_lf
-        .filter(
-            polars.col("year").eq(2020)
-        )
-    ).collect()
+    df = (hive_partitioned_lf.filter(polars.col("year").eq(2020))).collect()
     print(df)
 
 with timer.timeit("year_partitioned_lf"):
-    df = (
-        year_partitioned_lf
-        .filter(
-            polars.col("JULD").dt.year().eq(2020)
-        )
-    ).collect()
+    df = (year_partitioned_lf.filter(polars.col("JULD").dt.year().eq(2020))).collect()
     print(df)
 
 with timer.timeit("file_partitioned_lf"):
-    df = (
-        file_partitioned_lf
-        .filter(
-            polars.col("JULD").dt.year().eq(2020)
-        )
-    ).collect()
+    df = (file_partitioned_lf.filter(polars.col("JULD").dt.year().eq(2020))).collect()
     print(df)
-

@@ -1,6 +1,6 @@
-import polars
 import contextlib
 import time
+
 
 @contextlib.contextmanager
 def timeit(label):
@@ -10,4 +10,4 @@ def timeit(label):
         yield
     finally:
         end = time.perf_counter()
-        print(f"{label}: {round(end-start, 2)}s")
+        print(f"{label}: {round(end - start, 2)}s")

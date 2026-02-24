@@ -1,8 +1,8 @@
 import prefect
-from extract import extract
 from catalog import catalog
 from transform import transform
 from partition import partition
+
 
 @prefect.flow
 def main():
@@ -10,5 +10,6 @@ def main():
     catalog()
     transform()
     partition()
+
 
 main()

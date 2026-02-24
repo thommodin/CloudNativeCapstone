@@ -7,6 +7,7 @@ import xarray
 import shapely
 import datetime
 
+
 @prefect.task(
     task_run_name="get-catalog-{path}",
 )
@@ -35,12 +36,11 @@ def get_catalog(
 def create_argo_item(
     path: pathlib.Path,
 ) -> pystac.Item | None:
-    
+
     logger = prefect.get_run_logger()
     logger.info(path)
 
     ds = xarray.open_dataset(path)
-
 
     juld_min = ds["JULD"].min().values.astype("datetime64[s]").item()
     juld_max = ds["JULD"].max().values.astype("datetime64[s]").item()
@@ -61,7 +61,7 @@ def create_argo_item(
         )
     except:
         logger.info(ds)
-        logger.info(longitude_min)        
+        logger.info(longitude_min)
         logger.info(longitude_max)
         logger.info(latitude_min)
         logger.info(latitude_max)
@@ -87,6 +87,7 @@ def create_argo_item(
 
     return item
 
+
 @prefect.flow(
     flow_run_name="{path}",
     task_runner=prefect.task_runners.ThreadPoolTaskRunner(max_workers=8),
@@ -94,11 +95,8 @@ def create_argo_item(
 def create_argo_collection(
     path: pathlib.Path = pathlib.Path("argo"),
 ) -> pystac.Collection:
-    
-    futures = [
-        create_argo_item.submit(path)
-        for path in path.glob("*/*_prof.nc")
-    ]
+
+    futures = [create_argo_item.submit(path) for path in path.glob("*/*_prof.nc")]
 
     items = []
     for future in prefect.futures.as_completed(futures):
@@ -125,7 +123,7 @@ def create_argo_collection(
         description="a mock ARGO float collection",
         extent=pystac.Extent(
             spatial=pystac.SpatialExtent(bboxes),
-            temporal=pystac.TemporalExtent(intervals)
+            temporal=pystac.TemporalExtent(intervals),
         ),
     )
     collection.add_items(items)
@@ -134,7 +132,7 @@ def create_argo_collection(
 
 @prefect.flow
 def catalog() -> pystac.Catalog:
-    
+
     # Get the catalog
     catalog = get_catalog()
 

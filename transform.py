@@ -6,6 +6,7 @@ import pyarrow
 import pyarrow.dataset
 import collections
 
+
 @prefect.task
 def get_items(
     catalog: pystac.Catalog,
@@ -22,9 +23,9 @@ def _transform_netcdf_to_parquet(
     store_path: pathlib.Path,
     file_name: str,
 ) -> pyarrow.dataset.Dataset:
-    
+
     store_path.mkdir(exist_ok=True)
-    
+
     table = pyarrow.table(ds.to_dataframe().reset_index())
     table = table.append_column(
         "file",
@@ -50,14 +51,14 @@ def transform_netcdf(
     parquet_store_path: pathlib.Path = pathlib.Path("parquet"),
     zarr_store_path: pathlib.Path = pathlib.Path("zarr"),
 ):
-    
+
     ds = xarray.open_dataset(path)
-    
+
     # Find the dimension structures
     dd = collections.defaultdict(list)
     for k, v in ds.variables.items():
         dd[v.dims].append(k)
-    
+
     ds = ds.drop_dims({"N_PARAM", "N_HISTORY", "N_CALIB"})
 
     return _transform_netcdf_to_parquet(
