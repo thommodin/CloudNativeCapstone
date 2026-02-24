@@ -211,5 +211,6 @@ __marimo__/
 argo/
 catalog/
 parquet/
-parquet_partitioned/
+parquet_year_partitioned/
+parquet_year_file_partitioned/
 zarr/

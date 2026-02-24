@@ -1,18 +1,12 @@
 import prefect
+import prefect.task_runners
+import prefect.futures
 import pystac
 import pathlib
 import xarray
 import pyarrow
 import pyarrow.dataset
 import collections
-
-
-@prefect.task
-def get_items(
-    catalog: pystac.Catalog,
-) -> list[pystac.Item]:
-    collection = catalog.get_child("argo-csiro")
-    return list(collection.get_items())
 
 
 @prefect.task(
@@ -68,10 +62,16 @@ def transform_netcdf(
     )
 
 
-@prefect.flow
+@prefect.flow(
+    task_runner=prefect.task_runners.ProcessPoolTaskRunner(max_workers=16),
+)
 def transform(
     path: pathlib.Path = pathlib.Path("argo"),
 ):
+    prefect.futures.wait([
+        transform_netcdf.submit(path)
+        for path in path.glob("*/*_prof.nc")
+    ])
 
-    for path in path.glob("*/*_prof.nc"):
-        transform_netcdf(path)
+if __name__ == "__main__":
+    transform()
