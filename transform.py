@@ -1,30 +1,27 @@
 import prefect
 import pystac
-from catalog import get_catalog
 import pathlib
 import xarray
-import polars
 import pyarrow
-import pyarrow.parquet
 import pyarrow.dataset
 import collections
-import rich
-
 
 @prefect.task
 def get_items(
-    catalog: pystac.Catalog = get_catalog(),
+    catalog: pystac.Catalog,
 ) -> list[pystac.Item]:
     collection = catalog.get_child("argo-csiro")
     return list(collection.get_items())
 
 
-@prefect.task
+@prefect.task(
+    task_run_name="{file_name}",
+)
 def _transform_netcdf_to_parquet(
     ds: xarray.Dataset,
     store_path: pathlib.Path,
     file_name: str,
-) -> None:
+) -> pyarrow.dataset.Dataset:
     
     store_path.mkdir(exist_ok=True)
     
@@ -37,7 +34,7 @@ def _transform_netcdf_to_parquet(
         ),
     )
 
-    pyarrow.dataset.write_dataset(
+    return pyarrow.dataset.write_dataset(
         data=table,
         base_dir=store_path,
         partitioning=["file"],
@@ -60,14 +57,10 @@ def transform_netcdf(
     dd = collections.defaultdict(list)
     for k, v in ds.variables.items():
         dd[v.dims].append(k)
-
-    for k, v in dd.items():
-        print(f"\n\nDIMENSIONS: {k}\n\n")
-        print(ds[v])
     
     ds = ds.drop_dims({"N_PARAM", "N_HISTORY", "N_CALIB"})
 
-    _transform_netcdf_to_parquet(
+    return _transform_netcdf_to_parquet(
         ds=ds,
         store_path=parquet_store_path,
         file_name=path.name,
@@ -75,11 +68,9 @@ def transform_netcdf(
 
 
 @prefect.flow
-def main():
-    items = get_items()
-    for item in items:
-        transform_netcdf(pathlib.Path(item.assets["profile"].href))
+def transform(
+    path: pathlib.Path = pathlib.Path("argo"),
+):
 
-
-if __name__ == "__main__":
-    main()
+    for path in path.glob("*/*_prof.nc"):
+        transform_netcdf(path)

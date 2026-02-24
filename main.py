@@ -1,6 +1,14 @@
+import prefect
+from extract import extract
+from catalog import catalog
+from transform import transform
+from partition import partition
+
+@prefect.flow
 def main():
-    print("Hello from cloudnativecapstone!")
+    # extract()
+    catalog()
+    transform()
+    partition()
 
-
-if __name__ == "__main__":
-    main()
+main()

@@ -36,9 +36,11 @@ def create_argo_item(
     path: pathlib.Path,
 ) -> pystac.Item | None:
     
+    logger = prefect.get_run_logger()
+    logger.info(path)
+
     ds = xarray.open_dataset(path)
 
-    logger = prefect.get_run_logger()
 
     juld_min = ds["JULD"].min().values.astype("datetime64[s]").item()
     juld_max = ds["JULD"].max().values.astype("datetime64[s]").item()
@@ -82,6 +84,7 @@ def create_argo_item(
         geometry=geometry.__geo_interface__,
         bbox=geometry.bounds,
     )
+
     return item
 
 @prefect.flow(
@@ -94,7 +97,7 @@ def create_argo_collection(
     
     futures = [
         create_argo_item.submit(path)
-        for path in list(path.glob("*/*_prof.nc"))
+        for path in path.glob("*/*_prof.nc")
     ]
 
     items = []
@@ -130,7 +133,7 @@ def create_argo_collection(
 
 
 @prefect.flow
-def main():
+def catalog() -> pystac.Catalog:
     
     # Get the catalog
     catalog = get_catalog()
@@ -142,9 +145,4 @@ def main():
         catalog.normalize_hrefs("./catalog")
         catalog.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
 
-    # Get the collection
-    collection = catalog.get_child("argo-csiro")
-
-
-if __name__ == "__main__":
-    main()
+    return catalog
