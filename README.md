@@ -35,8 +35,8 @@ Also utilise the hive partitioning for read.
 | Dataset | Partition Scheme | # Files | File Size (gb) | Read whole dataset time (s) | Time to read 2020 year (s) | Hive Partitioning |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Argo (CSIRO subset) | netcdf File per netcdf file | 1179 | 7.60 | na | na | na |
-| Argo (CSIRO subset) | Parquet file per netcdf file | 1179 | 2.49 | 107 | 69.35 | FALSE |
-| Argo (CSIRO subset) | Parquet file/s per year | 42 | **1.37** | **32** | 35.05 | FALSE |
-| Argo (CSIRO subset) | Parquet file/s per year | na | na | na | **4.54** | TRUE |
-| Argo (CSIRO subset) | Parquet file/s per year per file | 7048 | 1.64 | 103.6s | 62.74s | FALSE |
-| Argo (CSIRO subset) | Parquet file/s per year per file | na | na | na | 8.61s | TRUE |
+| Argo (CSIRO subset) | Parquet file per netcdf file | 1179 | 2.49 | 74.08 | 26.75 | FALSE |
+| Argo (CSIRO subset) | Parquet file/s per year | 42 | **1.37** | **34.91** | 5.05 | FALSE |
+| Argo (CSIRO subset) | Parquet file/s per year | na | na | na | **5.04** | TRUE |
+| Argo (CSIRO subset) | Parquet file/s per year per file | 7048 | 1.64 | 95.7 | 62.74 | FALSE |
+| Argo (CSIRO subset) | Parquet file/s per year per file | na | na | na | 9.15 | TRUE |

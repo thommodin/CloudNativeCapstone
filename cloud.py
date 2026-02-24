@@ -5,7 +5,7 @@ import datetime
 
 @prefect.task(
     log_prints=True,
-    task_run_name="{source}-hive-partitioning-{hive_partitioning}"
+    task_run_name="filter-and-collect-{source}-hive-partitioning-{hive_partitioning}"
 )
 def time_lf_filter_and_collect(
     source: str,
@@ -21,6 +21,24 @@ def time_lf_filter_and_collect(
 
     with timer.timeit(source):
         df = lf.filter(filter_expression).collect()
+        print(df)
+
+
+@prefect.task(
+    log_prints=True,
+    task_run_name="collect-{source}"
+)
+def time_lf_collect(
+    source: str,
+):
+    
+    lf = polars.scan_parquet(
+        source=source,
+        storage_options={"skip_signature": "true"},
+    )
+
+    with timer.timeit(source):
+        df = lf.collect()
         print(df)
 
 
@@ -65,6 +83,18 @@ def benchmark_cloud_native():
             polars.col("JULD").ge(datetime.date(2020, 1, 1))
             & polars.col("JULD").le(datetime.date(2020, 12, 31))
         ),
+    )
+
+    time_lf_collect(
+        source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
+    )
+
+    time_lf_collect(
+        source="s3://data-uplift-public/capstone/parquet/",
+    )
+
+    time_lf_collect(
+        source="s3://data-uplift-public/capstone/parquet_year_file_partitioned/",
     )
 
 if __name__ == "__main__":
