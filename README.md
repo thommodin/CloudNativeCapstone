@@ -40,3 +40,12 @@ Also utilise the hive partitioning for read.
 | Argo (CSIRO subset) | Parquet file/s per year | na | na | na | **5.04** | TRUE |
 | Argo (CSIRO subset) | Parquet file/s per year per file | 7048 | 1.64 | 95.7 | 62.74 | FALSE |
 | Argo (CSIRO subset) | Parquet file/s per year per file | na | na | na | 9.15 | TRUE |
+
+### Takeaways
+What we see in these (admittedly small and unrepeated results) is:
+
+1. Correlation in file size and time to read; less data over the wire `==` good
+2. Inverse correlation in # of files and time to read; more https sessions `==` bad
+3. Push down filtering (filtering on parquet metadata) is fast, but affected by # files; more files `==` more metadata `==` bad
+4. Parquet compresses data far better than netcdf; parquet compression is a free good
+5. Parquet compresses data better when organised such that similar data is next to each other; better parquet compression requires tuning
