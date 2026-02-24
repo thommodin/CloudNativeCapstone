@@ -4,10 +4,8 @@ import prefect
 import prefect.task_runners
 import prefect.futures
 import xarray
-import numpy
 import shapely
 import datetime
-import rich
 
 @prefect.task(
     task_run_name="get-catalog-{path}",
@@ -23,6 +21,7 @@ def get_catalog(
         catalog = pystac.Catalog(
             id=id,
             description=description,
+            href=path,
         )
     else:
         logger.info(f"found catalog @ `{path}`")
@@ -59,11 +58,16 @@ def create_argo_item(
             ],
         )
     except:
+        logger.info(ds)
+        logger.info(longitude_min)        
+        logger.info(longitude_max)
+        logger.info(latitude_min)
+        logger.info(latitude_max)
         logger.error(f"`{path}` failed to generate a geometry")
         raise
 
     asset = pystac.Asset(
-        href=f"s3://imos-data/IMOS/Argo/dac/csiro/{path}",
+        href=path.absolute(),
         title=path.with_suffix("").name,
         description="argo netcdf",
         media_type="application/netcdf",
@@ -90,7 +94,7 @@ def create_argo_collection(
     
     futures = [
         create_argo_item.submit(path)
-        for path in path.glob("*/*_prof.nc")
+        for path in list(path.glob("*/*_prof.nc"))
     ]
 
     items = []
@@ -140,15 +144,6 @@ def main():
 
     # Get the collection
     collection = catalog.get_child("argo-csiro")
-
-    start_date = datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc)
-    recent_items = [
-        item for item in collection.get_items() 
-        if item.datetime >= start_date
-    ]
-
-    rich.print(recent_items)
-
 
 
 if __name__ == "__main__":

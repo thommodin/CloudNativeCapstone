@@ -210,3 +210,6 @@ __marimo__/
 .DS_Store
 argo/
 catalog/
+parquet/
+parquet_partitioned/
+zarr/
