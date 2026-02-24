@@ -36,5 +36,5 @@ Also utilise the hive partitioning for read.
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Argo (CSIRO subset) | netcdf File per netcdf file | 1179 | 7.60 | na | na | na |
 | Argo (CSIRO subset) | Parquet file per netcdf file | 1179 | 2.49 | 107 | 69.35 | FALSE |
-| Argo (CSIRO subset) | Parquet file/s per year | **1.37** | 42 | **32** | 35.05 | FALSE |
+| Argo (CSIRO subset) | Parquet file/s per year | 42 | **1.37** | **32** | 35.05 | FALSE |
 | Argo (CSIRO subset) | Parquet file/s per year | na | na | na | **4.54** | TRUE |
