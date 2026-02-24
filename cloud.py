@@ -5,7 +5,7 @@ import datetime
 
 @prefect.task(
     log_prints=True,
-    task_run_name="{source}"
+    task_run_name="{source}-hive-partitioning-{hive_partitioning}"
 )
 def time_lf_filter_and_collect(
     source: str,

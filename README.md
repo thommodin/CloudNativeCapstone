@@ -38,3 +38,5 @@ Also utilise the hive partitioning for read.
 | Argo (CSIRO subset) | Parquet file per netcdf file | 1179 | 2.49 | 107 | 69.35 | FALSE |
 | Argo (CSIRO subset) | Parquet file/s per year | 42 | **1.37** | **32** | 35.05 | FALSE |
 | Argo (CSIRO subset) | Parquet file/s per year | na | na | na | **4.54** | TRUE |
+| Argo (CSIRO subset) | Parquet file/s per year per file | 7048 | 1.64 | 103.6s | 62.74s | FALSE |
+| Argo (CSIRO subset) | Parquet file/s per year per file | na | na | na | 8.61s | TRUE |
