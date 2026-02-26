@@ -3,14 +3,6 @@ import prefect
 import pathlib
 import collections
 import rich
-import json
-
-
-@prefect.task
-def get_netcdf_dimension_groups(
-    ds: xarray.Dataset,
-):
-    
 
 
 @prefect.task(
