@@ -1,7 +1,7 @@
 import sh
 import sys
 import prefect
-import pathlib
+
 
 @prefect.flow
 def extract():
@@ -20,6 +20,7 @@ def extract():
         _out=sys.stdout,
         _err=sys.stderr,
     )
+
 
 if __name__ == "__main__":
     extract()

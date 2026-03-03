@@ -1,12 +1,9 @@
-import pyarrow.dataset
 import pathlib
 import polars
 import prefect
 
 
-@prefect.task(
-    task_run_name="{key}"
-)
+@prefect.task(task_run_name="{key}")
 def sink(
     lf: polars.LazyFrame,
     key: list[polars.Expr],
@@ -40,6 +37,7 @@ def partition():
         ],
         base_path=pathlib.Path("parquet_year_partitioned"),
     )
+
 
 if __name__ == "__main__":
     partition()

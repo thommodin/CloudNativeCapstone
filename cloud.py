@@ -3,16 +3,17 @@ import timer
 import prefect
 import datetime
 
+
 @prefect.task(
     log_prints=True,
-    task_run_name="filter-and-collect-{source}-hive-partitioning-{hive_partitioning}"
+    task_run_name="filter-and-collect-{source}-hive-partitioning-{hive_partitioning}",
 )
 def time_lf_filter_and_collect(
     source: str,
     filter_expression: polars.Expr,
     hive_partitioning=False,
 ):
-    
+
     lf = polars.scan_parquet(
         source=source,
         storage_options={"skip_signature": "true"},
@@ -24,14 +25,11 @@ def time_lf_filter_and_collect(
         print(df)
 
 
-@prefect.task(
-    log_prints=True,
-    task_run_name="collect-{source}"
-)
+@prefect.task(log_prints=True, task_run_name="collect-{source}")
 def time_lf_collect(
     source: str,
 ):
-    
+
     lf = polars.scan_parquet(
         source=source,
         storage_options={"skip_signature": "true"},
@@ -47,12 +45,10 @@ def benchmark_cloud_native():
 
     time_lf_filter_and_collect(
         source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
-        filter_expression=(
-            polars.col("year").eq(2020)
-        ),
+        filter_expression=(polars.col("year").eq(2020)),
         hive_partitioning=True,
     )
-    
+
     time_lf_filter_and_collect(
         source="s3://data-uplift-public/capstone/parquet/",
         filter_expression=(
@@ -69,7 +65,6 @@ def benchmark_cloud_native():
         ),
     )
 
-
     time_lf_collect(
         source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
     )
@@ -77,6 +72,7 @@ def benchmark_cloud_native():
     time_lf_collect(
         source="s3://data-uplift-public/capstone/parquet/",
     )
+
 
 if __name__ == "__main__":
     benchmark_cloud_native()

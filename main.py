@@ -4,6 +4,7 @@ from transform import transform
 from partition import partition
 from cloud import benchmark_cloud_native
 
+
 @prefect.flow
 def main():
     extract()

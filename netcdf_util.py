@@ -5,9 +5,7 @@ import collections
 import rich
 
 
-@prefect.task(
-    task_run_name="{path}"
-)
+@prefect.task(task_run_name="{path}")
 def get_netcdf_structure(path: pathlib.Path):
 
     ds = xarray.open_dataset(path)
@@ -18,9 +16,7 @@ def get_netcdf_structure(path: pathlib.Path):
     return structure
 
 
-@prefect.flow(
-    flow_run_name="{path}"
-)
+@prefect.flow(flow_run_name="{path}")
 def get_netcdf_structure_files(path: pathlib.Path):
     structure_files = collections.defaultdict(list)
     for path in path.glob("**/*.nc"):
@@ -28,7 +24,7 @@ def get_netcdf_structure_files(path: pathlib.Path):
         structure_files[str(structure)].append(str(path))
     return structure_files
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     structure = get_netcdf_structure(pathlib.Path("argo/7900948/7900948_prof.nc"))
     rich.print(structure)
