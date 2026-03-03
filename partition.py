@@ -21,10 +21,13 @@ def sink(
 
 
 @prefect.flow
-def partition():
+def partition(
+    parquet_source: pathlib.Path = pathlib.Path("parquet"),
+    parquet_output: pathlib.Path = pathlib.Path("parquet_year_partitioned"),
+):
 
     lf = polars.scan_parquet(
-        source=pathlib.Path("parquet"),
+        source=parquet_source,
         missing_columns="insert",
         extra_columns="ignore",
     )
@@ -35,7 +38,7 @@ def partition():
         key=[
             polars.col("JULD").dt.year().alias("year"),
         ],
-        base_path=pathlib.Path("parquet_year_partitioned"),
+        base_path=parquet_output,
     )
 
 
