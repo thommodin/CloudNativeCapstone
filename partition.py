@@ -27,7 +27,7 @@ def partition(
 ):
 
     lf = polars.scan_parquet(
-        source=parquet_source,
+        source=list(parquet_source.glob("**/*.parquet")),
         missing_columns="insert",
         extra_columns="ignore",
     )
