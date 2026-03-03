@@ -1,13 +1,12 @@
 import prefect
-from catalog import catalog
+from extract import extract
 from transform import transform
 from partition import partition
 from cloud import benchmark_cloud_native
 
 @prefect.flow
 def main():
-    # extract()
-    catalog()
+    extract()
     transform()
     partition()
     benchmark_cloud_native()

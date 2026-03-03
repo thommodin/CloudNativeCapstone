@@ -52,38 +52,23 @@ def benchmark_cloud_native():
         ),
         hive_partitioning=True,
     )
-
-    time_lf_filter_and_collect(
-        source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
-        filter_expression=(
-            polars.col("JULD").ge(datetime.date(2020, 1, 1))
-            & polars.col("JULD").le(datetime.date(2020, 12, 31))
-        ),
-    )
-
-    time_lf_filter_and_collect(
-        source="s3://data-uplift-public/capstone/parquet/",
-        filter_expression=(
-            polars.col("JULD").ge(datetime.date(2020, 1, 1))
-            & polars.col("JULD").le(datetime.date(2020, 12, 31))
-        ),
-    )
-
-    time_lf_filter_and_collect(
-        source="s3://data-uplift-public/capstone/parquet_year_file_partitioned/",
-        filter_expression=(
-            polars.col("year").eq(2020)
-        ),
-        hive_partitioning=True,
-    )
     
     time_lf_filter_and_collect(
-        source="s3://data-uplift-public/capstone/parquet_year_file_partitioned/",
+        source="s3://data-uplift-public/capstone/parquet/",
         filter_expression=(
             polars.col("JULD").ge(datetime.date(2020, 1, 1))
             & polars.col("JULD").le(datetime.date(2020, 12, 31))
         ),
     )
+
+    time_lf_filter_and_collect(
+        source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
+        filter_expression=(
+            polars.col("JULD").ge(datetime.date(2020, 1, 1))
+            & polars.col("JULD").le(datetime.date(2020, 12, 31))
+        ),
+    )
+
 
     time_lf_collect(
         source="s3://data-uplift-public/capstone/parquet_year_partitioned/",
@@ -91,10 +76,6 @@ def benchmark_cloud_native():
 
     time_lf_collect(
         source="s3://data-uplift-public/capstone/parquet/",
-    )
-
-    time_lf_collect(
-        source="s3://data-uplift-public/capstone/parquet_year_file_partitioned/",
     )
 
 if __name__ == "__main__":

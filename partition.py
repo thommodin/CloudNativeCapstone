@@ -4,7 +4,9 @@ import polars
 import prefect
 
 
-@prefect.task
+@prefect.task(
+    task_run_name="{key}"
+)
 def sink(
     lf: polars.LazyFrame,
     key: list[polars.Expr],
@@ -25,18 +27,12 @@ def sink(
 def partition():
 
     lf = polars.scan_parquet(
-        source=pathlib.Path("parquet")
+        source=pathlib.Path("parquet"),
+        missing_columns="insert",
+        extra_columns="ignore",
     )
 
-    sink(
-        lf=lf,
-        key=[
-            polars.col("JULD").dt.year().alias("year"),
-            polars.col("file"),
-        ],
-        base_path=pathlib.Path("parquet_year_file_partitioned"),
-    )
-
+    # Partition by year
     sink(
         lf=lf,
         key=[
