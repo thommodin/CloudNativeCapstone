@@ -66,24 +66,11 @@ def transform_netcdf(
     logger = prefect.get_run_logger()
 
     ds = xarray.open_dataset(path)
-
-    # Find the dimension structures
-    dd = collections.defaultdict(list)
-    for k, v in ds.variables.items():
-        dd[v.dims].append(k)
-
     ds = ds.drop_dims(drop_dims)
-
     missing_vars = required_variables - set(ds.data_vars)
     missing_dims = required_dims - set(ds.dims)
     if missing_vars or missing_dims:
-        logger.warning(
-            "Skipping %s — missing variables: %s, missing dims: %s",
-            path,
-            missing_vars or "none",
-            missing_dims or "none",
-        )
-        return None
+        raise ValueError(f"Skipping {path} - missing variables: {missing_vars or None }, missing dims: {missing_dims or None}")
 
     return _transform_netcdf_to_parquet(
         ds=ds,
