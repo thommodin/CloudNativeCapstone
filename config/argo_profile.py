@@ -53,7 +53,7 @@ SCHEMA = pyarrow.schema(
     ]
 )
 
-REQUIRED_VARIABLES: set[str] = {"PRES", "TEMP", "PSAL", "JULD", "LATITUDE", "LONGITUDE"}
+REQUIRED_VARIABLES: set[str] = {"PRES", "TEMP", "JULD", "LATITUDE", "LONGITUDE"}
 
 REQUIRED_DIMS: set[str] = {"N_PROF", "N_LEVELS"}
 

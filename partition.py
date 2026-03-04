@@ -17,7 +17,6 @@ def sink(
             key=key,
         )
     )
-    pass
 
 
 @prefect.flow
@@ -29,7 +28,6 @@ def partition(
     lf = polars.scan_parquet(
         source=list(parquet_source.glob("**/*.parquet")),
         missing_columns="insert",
-        extra_columns="ignore",
     )
 
     # Partition by year
