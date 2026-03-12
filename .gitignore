@@ -208,9 +208,9 @@ __marimo__/
 
 
 .DS_Store
+.prefect
 argo/
 catalog/
 parquet/
-parquet_year_partitioned/
-parquet_year_file_partitioned/
 zarr/
+argo_aodn_cloud_optimised/

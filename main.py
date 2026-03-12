@@ -7,7 +7,6 @@ import config.argo_profile as argo_profile
 from extract import extract
 from transform import transform
 from partition import partition
-from cloud import benchmark_cloud_native
 
 
 @prefect.flow
@@ -22,7 +21,7 @@ def main(
     required_dims: set[str] = argo_profile.REQUIRED_DIMS,
     drop_dims: set[str] = argo_profile.DROP_DIMS,
 ):
-    extract(s3_source=s3_source, local_path=source_path, include_glob=include_glob)
+    # extract(s3_source=s3_source, local_path=source_path, include_glob=include_glob)
     transform(
         source_path=source_path,
         parquet_store_path=parquet_store_path,
@@ -32,7 +31,6 @@ def main(
         drop_dims=drop_dims,
     )
     partition(parquet_source=parquet_store_path, parquet_output=parquet_output)
-    benchmark_cloud_native()
 
 
 if __name__ == "__main__":

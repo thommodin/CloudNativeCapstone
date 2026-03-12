@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "dask>=2026.1.2",
+    "h3>=4.4.2",
     "netcdf4>=1.7.4",
     "polars>=1.38.1",
+    "polars-h3>=0.6.1",
     "prefect>=3.6.18",
     "pyarrow>=23.0.1",
     "pystac>=1.14.3",
@@ -17,4 +19,13 @@ dependencies = [
     "shapely>=2.1.2",
     "xarray>=2026.2.0",
     "zarr>=3.1.5",
+]
+
+[tool.prefect]
+home = ".prefect"
+
+[tool.pyright]
+exclude = [
+    "**/*.parquet",
+    "**/*.nc",
 ]
